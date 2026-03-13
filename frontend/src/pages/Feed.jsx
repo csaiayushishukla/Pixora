@@ -1,47 +1,32 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-function Feed(){
+function Feed() {
 
-  const [posts,setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-  useEffect(()=>{
-    axios.get("http://localhost:3000/posts")
-    .then(res=>{
+  useEffect(() => {
+    async function fetchPosts() {
+      const res = await axios.get("http://localhost:3000/posts");
       setPosts(res.data);
-    })
-  },[])
+    }
+
+    fetchPosts();
+  }, []);
 
   return (
-    <div style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
+    <div>
 
-      <h1>My Feed</h1>
+      {posts.map((post) => (
+        <div key={post._id}>
 
-      {posts.map((post)=>(
-        <div 
-          key={post._id} 
-          style={{
-            border:"1px solid #ddd",
-            borderRadius:"10px",
-            padding:"10px",
-            margin:"20px",
-            width:"300px",
-            boxShadow:"0 2px 5px rgba(0,0,0,0.1)"
-          }}
-        >
-          <img 
-            src={post.image} 
-            alt="post"
-            style={{
-              width:"100%",
-              borderRadius:"10px"
-            }}
-          />
+          <img src={post.image} width="300" />
+
         </div>
       ))}
 
     </div>
-  )
+  );
 }
 
 export default Feed;

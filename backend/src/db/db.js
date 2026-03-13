@@ -1,12 +1,12 @@
-﻿const mongoose = require('mongoose');
+﻿const express = require("express");
+const app = express();
+const cors = require("cors");
 
-async function connectDB() {
-  try {
-    await mongoose.connect(process.env.MONGO_URL);
-    console.log('MongoDB Connected');
-  } catch (error) {
-    console.log(error);
-  }
-}
+app.use(cors());
+app.use(express.json());
 
-module.exports = connectDB;
+app.use("/uploads", express.static("uploads"));
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});

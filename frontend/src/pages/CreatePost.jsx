@@ -1,48 +1,42 @@
 import { useState } from "react";
 import axios from "axios";
 
-function CreatePost(){
+function CreatePost() {
 
-  const [caption,setCaption] = useState("");
-  const [file,setFile] = useState(null);
+  const [caption, setCaption] = useState("");
+  const [image, setImage] = useState(null);
 
-  const handleSubmit = async (e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("caption",caption);
-    formData.append("image",file);
+    formData.append("caption", caption);
+    formData.append("image", image);
 
-    await axios.post("http://localhost:3000/posts",formData);
-  }
+    await axios.post("http://localhost:3000/posts", formData);
+
+    alert("Post created!");
+  };
 
   return (
-    <div>
-      <h1>Create Post</h1>
+    <form onSubmit={handleSubmit}>
 
-      <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        placeholder="Caption"
+        value={caption}
+        onChange={(e) => setCaption(e.target.value)}
+      />
 
-        <input
-          type="file"
-          onChange={(e)=>setFile(e.target.files[0])}
-        />
+      <input
+        type="file"
+        onChange={(e) => setImage(e.target.files[0])}
+      />
 
-        <br/><br/>
+      <button type="submit">Post</button>
 
-        <input
-          type="text"
-          placeholder="Caption"
-          value={caption}
-          onChange={(e)=>setCaption(e.target.value)}
-        />
-
-        <br/><br/>
-
-        <button type="submit">Post</button>
-
-      </form>
-    </div>
-  )
+    </form>
+  );
 }
 
 export default CreatePost;
