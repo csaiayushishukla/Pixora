@@ -7,10 +7,12 @@ const imagekit = new ImageKit({
 });
 
 async function uploadFile(buffer) {
-  return await imagekit.upload({
+  const result = await imagekit.upload({
     file: buffer.toString("base64"),
     fileName: Date.now() + ".jpg"
   });
+
+  return result;
 }
 
 module.exports = uploadFile;

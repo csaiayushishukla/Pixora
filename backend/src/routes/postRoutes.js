@@ -24,11 +24,10 @@ router.post("/", upload.single("image"), async (req, res) => {
 
     const post = await Post.create({
       caption: req.body.caption,
-      imageUrl: result.url
+      image: result.url
     });
 
     res.json(post);
-
   } catch (err) {
     res.status(500).json(err);
   }
