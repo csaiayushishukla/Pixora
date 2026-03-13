@@ -13,13 +13,18 @@ router.get("/", async (req, res) => {
     const posts = await Post.find().sort({ createdAt: -1 });
     res.json(posts);
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
 /* CREATE POST */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Image is required" });
+    }
+
     const result = await uploadFile(req.file.buffer);
 
     const post = await Post.create({
@@ -28,8 +33,9 @@ router.post("/", upload.single("image"), async (req, res) => {
     });
 
     res.json(post);
+
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
