@@ -1,15 +1,16 @@
 ﻿const express = require("express");
 const router = express.Router();
-const Post = require("../models/postModel");
 
-// GET POSTS
+// GET posts
 router.get("/", async (req, res) => {
-  try {
-    const posts = await Post.find();
-    res.json(posts);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  res.json([]);
+});
+
+// POST post
+router.post("/", (req, res) => {
+  res.json({
+    message: "POST route working"
+  });
 });
 
 module.exports = router;

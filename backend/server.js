@@ -11,19 +11,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// POSTS ROUTE
+// IMPORTANT: register routes
 app.use("/posts", postRoutes);
 
-// TEST ROUTE
+// test route
 app.get("/", (req, res) => {
-  res.send("Pixora backend running 🚀");
+  res.send("Backend running 🚀");
 });
 
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.log("MongoDB error:", err));
+.then(()=> console.log("MongoDB connected"))
+.catch(err => console.log(err));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
