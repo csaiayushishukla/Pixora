@@ -6,12 +6,18 @@ function Feed() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+
     async function fetchPosts() {
-      const res = await axios.get("http://localhost:3000/posts");
-      setPosts(res.data);
+      try {
+        const res = await axios.get("http://localhost:3000/posts");
+        setPosts(res.data);
+      } catch (error) {
+        console.log("Error fetching posts:", error);
+      }
     }
 
     fetchPosts();
+
   }, []);
 
   return (
@@ -19,9 +25,7 @@ function Feed() {
 
       {posts.map((post) => (
         <div key={post._id}>
-
           <img src={post.image} width="300" />
-
         </div>
       ))}
 

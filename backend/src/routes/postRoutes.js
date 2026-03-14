@@ -20,10 +20,7 @@ router.get("/", async (req, res) => {
 /* CREATE POST */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-
-    if (!req.file) {
-      return res.status(400).json({ error: "Image is required" });
-    }
+    if (!req.file) return res.status(400).json({ error: "Image is required" });
 
     const result = await uploadFile(req.file.buffer);
 
@@ -33,7 +30,6 @@ router.post("/", upload.single("image"), async (req, res) => {
     });
 
     res.json(post);
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
