@@ -1,40 +1,40 @@
-import { useState } from "react";
 import axios from "axios";
+import { useState } from "react";
 
 function CreatePost() {
-
-  const [caption, setCaption] = useState("");
-  const [image, setImage] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!file) return alert("Please select an image");
 
-    const formData = new FormData();
-    formData.append("caption", caption);
-    formData.append("image", image);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      // Convert "data:image/png;base64,..." to pure base64
+      const base64 = reader.result.split(",")[1];
 
-    await axios.post("http://localhost:3000/posts", formData);
-
-    alert("Post created!");
+      try {
+        const res = await axios.post("http://localhost:3000/posts", {
+          title,
+          description,
+          fileBuffer: base64, // send proper base64
+        });
+        console.log("Post created:", res.data);
+      } catch (err) {
+        console.error("Error creating post:", err);
+      }
+    };
   };
 
   return (
     <form onSubmit={handleSubmit}>
-
-      <input
-        type="text"
-        placeholder="Caption"
-        value={caption}
-        onChange={(e) => setCaption(e.target.value)}
-      />
-
-      <input
-        type="file"
-        onChange={(e) => setImage(e.target.files[0])}
-      />
-
-      <button type="submit">Post</button>
-
+      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
+      <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
+      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+      <button type="submit">Create Post</button>
     </form>
   );
 }

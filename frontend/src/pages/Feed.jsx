@@ -1,36 +1,32 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-function Feed() {
-
+const Feed = () => {
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-
-    async function fetchPosts() {
-      try {
-        const res = await axios.get("http://localhost:3000/posts");
-        setPosts(res.data);
-      } catch (error) {
-        console.log("Error fetching posts:", error);
-      }
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/posts"); // ✅ correct URL
+      setPosts(res.data);
+    } catch (err) {
+      console.error("Error fetching posts:", err);
     }
+  };
 
+  useEffect(() => {
     fetchPosts();
-
   }, []);
 
   return (
     <div>
-
-      {posts.map((post) => (
+      {posts.map(post => (
         <div key={post._id}>
-          <img src={post.image} width="300" />
+          <h3>{post.caption}</h3>
+          <img src={post.image} alt={post.caption} width="200" />
         </div>
       ))}
-
     </div>
   );
-}
+};
 
 export default Feed;
