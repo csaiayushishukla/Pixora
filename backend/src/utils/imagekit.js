@@ -10,7 +10,7 @@ async function uploadFile(buffer, fileName = `post_${Date.now()}.jpg`) {
   try {
     const result = await imagekit.upload({
       file: buffer.toString("base64"),
-      fileName: fileName
+      fileName
     });
     return result;
   } catch (err) {
