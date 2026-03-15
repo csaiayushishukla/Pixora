@@ -1,15 +1,16 @@
+// Feed.jsx
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const Feed = () => {
+export default function Feed() {
   const [posts, setPosts] = useState([]);
 
   const fetchPosts = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/posts"); // ✅ correct URL
+      const res = await axios.get("https://pixora-backend-iu2z.onrender.com/posts");
       setPosts(res.data);
     } catch (err) {
-      console.error("Error fetching posts:", err);
+      console.log("Error fetching posts:", err.response?.data || err.message);
     }
   };
 
@@ -19,14 +20,12 @@ const Feed = () => {
 
   return (
     <div>
-      {posts.map(post => (
+      {posts.map((post) => (
         <div key={post._id}>
-          <h3>{post.caption}</h3>
-          <img src={post.image} alt={post.caption} width="200" />
+          <img src={post.image} alt={post.caption} />
+          <p>{post.caption}</p>
         </div>
       ))}
     </div>
   );
-};
-
-export default Feed;
+}

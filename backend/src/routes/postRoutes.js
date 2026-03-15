@@ -2,24 +2,32 @@
 const router = express.Router();
 const multer = require("multer");
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const upload = multer();
+const Post = require("../models/postModel");
+const uploadFile = require("../utils/imagekit");
 
-// GET POSTS
-router.get("/", async (req, res) => {
-  res.json([]);
+router.post("/", upload.single("image"), async (req, res) => {
+  try {
+
+    const result = await uploadFile(req.file.buffer);
+
+    const newPost = new Post({
+      caption: req.body.caption,
+      image: result.url
+    });
+
+    await newPost.save();
+
+    res.json(newPost);
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// CREATE POST
-router.post("/", upload.single("image"), async (req, res) => {
-
-  const caption = req.body.caption;
-
-  res.json({
-    message: "POST route working",
-    caption: caption
-  });
-
+router.get("/", async (req, res) => {
+  const posts = await Post.find();
+  res.json(posts);
 });
 
 module.exports = router;

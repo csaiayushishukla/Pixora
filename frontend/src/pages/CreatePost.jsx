@@ -1,42 +1,51 @@
+import React, { useState } from "react";
 import axios from "axios";
-import { useState } from "react";
 
-function CreatePost() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [file, setFile] = useState(null);
+const CreatePost = () => {
+  const [caption, setCaption] = useState("");
+  const [image, setImage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) return alert("Please select an image");
+    if (!image) return alert("Please select an image");
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = async () => {
-      // Convert "data:image/png;base64,..." to pure base64
-      const base64 = reader.result.split(",")[1];
+    const formData = new FormData();
+    formData.append("caption", caption);
+    formData.append("image", image);
 
-      try {
-        const res = await axios.post("http://localhost:3000/posts", {
-          title,
-          description,
-          fileBuffer: base64, // send proper base64
-        });
-        console.log("Post created:", res.data);
-      } catch (err) {
-        console.error("Error creating post:", err);
-      }
-    };
+    try {
+      const res = await axios.post(
+        "https://pixora-backend-iu2z.onrender.com/posts", // your deployed backend
+        formData
+      );
+      console.log("Post created:", res.data);
+      alert("Post created successfully!");
+      setCaption("");
+      setImage(null);
+    } catch (err) {
+      console.error("Error creating post:", err.response?.data || err.message);
+      alert("Error creating post");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
-      <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Description" />
-      <input type="file" onChange={(e) => setFile(e.target.files[0])} />
-      <button type="submit">Create Post</button>
-    </form>
+    <div>
+      <h2>Create Post</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Caption"
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+        />
+        <input
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+        />
+        <button type="submit">Post</button>
+      </form>
+    </div>
   );
-}
+};
 
 export default CreatePost;
