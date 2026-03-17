@@ -21,8 +21,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 
     const newPost = new Post({
       caption: req.body.caption,
-      image: result.url,
-      likes: 0   // ✅ ensure default
+      image: result.url
     });
 
     await newPost.save();
@@ -49,13 +48,13 @@ router.get("/", async (req, res) => {
 
 
 // =====================
-// ✅ LIKE POST (FINAL FIX)
+// ✅ LIKE POST
 // =====================
 router.put("/like/:id", async (req, res) => {
   try {
     const post = await Post.findByIdAndUpdate(
       req.params.id,
-      { $inc: { likes: 1 } },   // 🔥 best method
+      { $inc: { likes: 1 } },
       { new: true }
     );
 
@@ -64,7 +63,39 @@ router.put("/like/:id", async (req, res) => {
     }
 
     res.json({
-      message: "Liked successfully",
+      message: "Post liked",
+      post
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// =====================
+// ✅ ADD COMMENT
+// =====================
+router.post("/comment/:id", async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    if (!text) {
+      return res.status(400).json({ message: "Comment text required" });
+    }
+
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    post.comments.push({ text });
+
+    await post.save();
+
+    res.json({
+      message: "Comment added",
       post
     });
 
@@ -79,9 +110,9 @@ router.put("/like/:id", async (req, res) => {
 // =====================
 router.delete("/:id", async (req, res) => {
   try {
-    const deleted = await Post.findByIdAndDelete(req.params.id);
+    const deletedPost = await Post.findByIdAndDelete(req.params.id);
 
-    if (!deleted) {
+    if (!deletedPost) {
       return res.status(404).json({ message: "Post not found" });
     }
 

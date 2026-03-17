@@ -12,10 +12,22 @@ const postSchema = new mongoose.Schema(
     },
     likes: {
       type: Number,
-      default: 0   // ✅ important
-    }
+      default: 0
+    },
+    comments: [
+      {
+        text: {
+          type: String,
+          required: true
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now
+        }
+      }
+    ]
   },
-  { timestamps: true } // ✅ adds createdAt & updatedAt
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Post", postSchema);
