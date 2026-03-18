@@ -1,12 +1,13 @@
-﻿const express = require("express");
-const cors = require("cors");
-const postRoutes = require("./routes/postRoutes");
+﻿import axios from "axios";
 
-const app = express();
+const API = axios.create({
+  baseURL: "http://localhost:3000/api", // backend URL
+});
 
-app.use(cors());
-app.use(express.json());
+// GET POSTS
+export const getPosts = () => API.get("/posts");
 
-app.use("/posts", postRoutes);
+// CREATE POST
+export const createPost = (data) => API.post("/posts", data);
 
-module.exports = app;
+export default API;
