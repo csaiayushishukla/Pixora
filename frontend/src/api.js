@@ -1,9 +1,5 @@
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "http://localhost:3000/api",
+export default axios.create({
+  baseURL: "https://pixora-backend-iu2z.onrender.com"
 });
-
-export const getPosts = () => API.get("/posts");
-
-export const createPost = (data) => API.post("/posts", data);

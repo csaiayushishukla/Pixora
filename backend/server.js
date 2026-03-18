@@ -5,16 +5,16 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 
 const postRoutes = require("./src/routes/postRoutes");
-const userRoutes = require("./src/routes/userRoutes"); // ✅ IMPORTANT
+const userRoutes = require("./src/routes/userRoutes");
 
-const app = express(); // ✅ MUST COME BEFORE app.use
+const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// ✅ ROUTES
+// ✅ FINAL ROUTES (NO /api)
 app.use("/posts", postRoutes);
-app.use("/users", userRoutes); // ✅ THIS LINE FIXES YOUR ERROR
+app.use("/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend running 🚀");
