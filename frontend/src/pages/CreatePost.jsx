@@ -1,48 +1,70 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
+import { createPost } from "../api";
 
 const CreatePost = () => {
   const [caption, setCaption] = useState("");
-  const [image, setImage] = useState(null);
+  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!image) return alert("Please select an image");
-
-    const formData = new FormData();
-    formData.append("caption", caption);
-    formData.append("image", image);
 
     try {
-      const res = await axios.post(
-        "https://pixora-backend-iu2z.onrender.com/posts", // your deployed backend
+      // 🔥 STEP 1: Upload image
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const uploadRes = await axios.post(
+        "http://localhost:3000/api/posts/upload",
         formData
       );
-      console.log("Post created:", res.data);
-      alert("Post created successfully!");
-      setCaption("");
-      setImage(null);
+
+      const imageUrl = uploadRes.data.url;
+
+      // 🔥 STEP 2: Create post
+      await createPost({
+        caption,
+        image: imageUrl,
+      });
+
+      alert("Post created 🚀");
+
+      // redirect to feed
+      window.location.href = "/";
+
     } catch (err) {
-      console.error("Error creating post:", err.response?.data || err.message);
-      alert("Error creating post");
+      console.log(err);
+      alert("Error uploading post ❌");
     }
   };
 
   return (
-    <div>
-      <h2>Create Post</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Caption"
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-        />
+    <div className="max-w-xl mx-auto mt-20 bg-[#1e293b] p-6 rounded-xl text-white">
+      <h2 className="text-2xl mb-4 font-bold">Create Post</h2>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+        {/* IMAGE INPUT */}
         <input
           type="file"
-          onChange={(e) => setImage(e.target.files[0])}
+          onChange={(e) => setFile(e.target.files[0])}
+          className="p-2 bg-gray-800 rounded"
+          required
         />
-        <button type="submit">Post</button>
+
+        {/* CAPTION */}
+        <textarea
+          placeholder="Write caption..."
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          className="p-2 rounded bg-gray-800"
+          required
+        />
+
+        {/* BUTTON */}
+        <button className="bg-blue-500 p-2 rounded hover:bg-blue-600">
+          Upload 🚀
+        </button>
       </form>
     </div>
   );
