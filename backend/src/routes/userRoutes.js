@@ -1,45 +1,30 @@
-const express = require("express");
+// routes/userRoutes.js
+import express from "express";
+import User from "../models/userModel.js";
+
 const router = express.Router();
 
-const User = require("../models/User");
-
-// SIGNUP
+// Signup
 router.post("/signup", async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-
-    const newUser = new User({
-      username,
-      email,
-      password,
-    });
-
-    await newUser.save();
-
-    res.json({ message: "User created successfully" });
+    const user = new User(req.body);
+    await user.save();
+    res.status(201).json(user);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ message: err.message });
   }
 });
 
-// LOGIN
+// Login
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user || user.password !== password) {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user || user.password !== req.body.password)
       return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    res.json({
-      message: "Login successful",
-      user,
-    });
+    res.json(user);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 });
 
-module.exports = router;
+export default router;

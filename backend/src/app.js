@@ -1,13 +1,17 @@
 ﻿import axios from "axios";
 
+// Use deployed backend
 const API = axios.create({
-  baseURL: "http://localhost:3000/api", // backend URL
+  baseURL: "https://pixora-backend-iu2z.onrender.com",
 });
 
-// GET POSTS
-export const getPosts = () => API.get("/posts");
+// POSTS
+export const getPosts = async () => (await API.get("/posts")).data;
+export const createPost = async (postData) => (await API.post("/posts", postData)).data;
+export const likePost = async (id) => (await API.put(`/posts/like/${id}`)).data;
+export const commentPost = async (id, comment) => (await API.post(`/posts/comment/${id}`, { comment })).data;
+export const deletePost = async (id) => (await API.delete(`/posts/${id}`)).data;
 
-// CREATE POST
-export const createPost = (data) => API.post("/posts", data);
-
-export default API;
+// USERS
+export const signupUser = async (userData) => (await API.post("/users/signup", userData)).data;
+export const loginUser = async (userData) => (await API.post("/users/login", userData)).data;
