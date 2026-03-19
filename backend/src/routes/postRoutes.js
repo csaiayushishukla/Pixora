@@ -2,6 +2,7 @@
 import Post from "../models/postModel.js";
 import multer from "multer";
 import path from "path";
+import mongoose from "mongoose"; // ✅ HERE
 
 const router = express.Router();
 
@@ -14,9 +15,25 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// ✅ CREATE POST
+// CREATE POST
 router.post("/", upload.single("file"), async (req, res) => {
   try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+
+    if (!req.file) {
+      return res.status(400).json({ message: "Image is required" });
+    }
+
+    if (!req.body.caption || !req.body.user) {
+      return res.status(400).json({ message: "Caption and user required" });
+    }
+
+    // ✅ check valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(req.body.user)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
     const imageUrl = `/uploads/${req.file.filename}`;
 
     const post = new Post({
@@ -26,12 +43,14 @@ router.post("/", upload.single("file"), async (req, res) => {
     });
 
     await post.save();
+
     res.status(201).json(post);
+
   } catch (err) {
-    console.error(err);
+    console.log("ERROR:", err);
     res.status(500).json({ message: err.message });
   }
 });
 
-// ✅ MUST HAVE THIS
+// export
 export default router;
