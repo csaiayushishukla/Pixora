@@ -1,50 +1,42 @@
 import axios from "axios";
 
-// 🔹 Your deployed backend URL
-const BASE_URL = "https://pixora-backend-iu2z.onrender.com";
+// ✅ YOUR BACKEND URL
+const API = "https://pixora-backend-iu2z.onrender.com";
 
-// 🔹 Create Post
-export const createPost = async (postData) => {
-  try {
-    const res = await axios.post(`${BASE_URL}/posts`, postData);
-    return res.data;
-  } catch (error) {
-    console.error("Error creating post:", error.response?.data || error.message);
-    throw error;
-  }
+// ------------------ AUTH ------------------
+export const signup = (data) => {
+  return axios.post(`${API}/api/v1/auth/signup`, data);
 };
 
-// 🔹 Get All Posts (optional but useful)
-export const getPosts = async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/posts`);
-    return res.data;
-  } catch (error) {
-    console.error("Error fetching posts:", error.response?.data || error.message);
-    throw error;
-  }
+export const login = (data) => {
+  return axios.post(`${API}/api/v1/auth/login`, data);
 };
 
-// 🔹 Like Post
-export const likePost = async (postId) => {
-  try {
-    const res = await axios.put(`${BASE_URL}/posts/like/${postId}`);
-    return res.data;
-  } catch (error) {
-    console.error("Error liking post:", error.response?.data || error.message);
-    throw error;
-  }
+// ------------------ POSTS ------------------
+export const getPosts = () => {
+  return axios.get(`${API}/api/v1/posts`);
 };
 
-// 🔹 Add Comment
-export const addComment = async (postId, comment) => {
-  try {
-    const res = await axios.post(`${BASE_URL}/posts/comment/${postId}`, {
-      text: comment,
-    });
-    return res.data;
-  } catch (error) {
-    console.error("Error adding comment:", error.response?.data || error.message);
-    throw error;
-  }
+export const createPost = (data, token) => {
+  return axios.post(`${API}/api/v1/posts`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const likePost = (postId, token) => {
+  return axios.put(`${API}/api/v1/posts/like/${postId}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const deletePost = (postId, token) => {
+  return axios.delete(`${API}/api/v1/posts/${postId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
